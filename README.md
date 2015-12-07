@@ -1,5 +1,6 @@
 # beFrugal
-SWE599 - Software Project
+SWE599 - Software Project.
+
 This is my first Android Project.
 I have watched Udacity->Developing Android Apps tutorial before starting to write this application. Then, as a developer I searched for many things find them on the internet and use them on my way.
 
