@@ -1,5 +1,23 @@
 <resources>
     <string name="app_name">Be Frugal</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_list_items">ListItemsActivity</string>
+    <string name="title_activity_list_items">Items in the list</string>
+    <string name="new_list_name">New List Name</string>
+    <string name="add">Add</string>
+    <string name="update">Update</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete_confirmation">Do you really want to delete %s?</string>
+
+    <!-- Snackbar Messages -->
+    <string name="add_snackbar">%s has been added successfully.</string>
+    <string name="update_snackbar">%1$s has been updated successfully to %2$s.</string>
+    <string name="delete_snackbar">%s has been deleted successfully.</string>
+    <string name="title_activity_list_item_detail">ListItemDetailActivity</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="total_amount">Total Amount</string>
+    <string name="bought_qty">Bought Quantity</string>
+    <string name="unit_type">Unit Type</string>
+    <string name="unit_amount">Unit Amount</string>
+    <string name="done">Done</string>
 </resources>

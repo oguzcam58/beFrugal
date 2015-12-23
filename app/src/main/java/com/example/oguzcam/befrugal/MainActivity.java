@@ -1,14 +1,18 @@
 package com.example.oguzcam.befrugal;
 
+import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 
 import com.example.oguzcam.befrugal.model.ListContract;
 
@@ -22,10 +26,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main_activity);
+
+        //setTitle("Welcome");
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -37,15 +43,49 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ContentValues values = new ContentValues();
-                values.put(ListContract.ListEntry.COLUMN_CREATION_DATE, new Date().getTime());
-                values.put(ListContract.ListEntry.COLUMN_LIST_NAME, "Alican");
-
-                getContentResolver().insert(ListContract.ListEntry.CONTENT_URI, values);
-                Snackbar.make(view, "Your new list created", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                // Show dialog to get user input as list name
+                showNewListDialog();
             }
         });
+    }
+
+    // Get list name input from user
+    private void showNewListDialog() {
+        final View dialogView = MainActivity.this.getLayoutInflater().inflate(R.layout.dialog_new_list, null);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+        // set dialog message
+        alertDialogBuilder
+                .setView(dialogView)
+                .setCancelable(false)
+                .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        final String listName = ((EditText) dialogView.findViewById(R.id.new_list_name)).getText().toString();
+                        ContentValues values = new ContentValues();
+                        values.put(ListContract.ListEntry.COLUMN_CREATION_DATE, new Date().getTime());
+                        values.put(ListContract.ListEntry.COLUMN_LIST_NAME, listName);
+
+                        getContentResolver().insert(ListContract.ListEntry.CONTENT_URI, values);
+
+                        Snackbar.make(findViewById(android.R.id.content),
+                                getString(R.string.add_snackbar, listName),
+                                Snackbar.LENGTH_LONG)
+                                .show();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // if this button is clicked, just close
+                        // the dialog box and do nothing
+                        dialog.cancel();
+                    }
+                });
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
     }
 
     @Override

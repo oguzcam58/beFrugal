@@ -65,7 +65,7 @@ public class ListContract {
         }
 
         public static Uri buildListItemWithListId(long listItemId) {
-            return CONTENT_URI.buildUpon().appendQueryParameter(COLUMN_LIST_ID, Long.toString(listItemId)).build();
+            return CONTENT_URI.buildUpon().appendPath(Long.toString(listItemId)).build();
         }
 
         public static long getListIdFromUri(Uri uri) {

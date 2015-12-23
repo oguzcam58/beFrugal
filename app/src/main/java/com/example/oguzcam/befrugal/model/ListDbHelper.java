@@ -48,7 +48,7 @@ public class ListDbHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_LIST_ITEM_TABLE = "CREATE TABLE " + ListItemEntry.TABLE_NAME + " (" +
                 ListItemEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 // Foreign key
-                ListItemEntry.COLUMN_LIST_ID + " INTEGER, " +
+                ListItemEntry.COLUMN_LIST_ID + " INTEGER NOT NULL, " +
                 // Other Columns
                 ListItemEntry.COLUMN_LIST_ITEM_NAME + " TEXT NOT NULL, " +
                 ListItemEntry.COLUMN_CREATION_DATE + " INTEGER NOT NULL, " +
