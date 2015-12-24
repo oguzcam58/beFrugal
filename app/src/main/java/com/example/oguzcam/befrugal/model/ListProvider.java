@@ -17,7 +17,8 @@ public class ListProvider extends ContentProvider {
 
     static final int LIST = 100;
     static final int LIST_ITEM = 300;
-    static final int LIST_ITEM_WITH_LIST_ID = 301;
+    static final int LIST_ITEM_WITH_ID = 301;
+    static final int LIST_ITEM_WITH_LIST_ID = 310;
 
     private static final SQLiteQueryBuilder sListItemWithListQueryBuilder;
 
@@ -39,6 +40,30 @@ public class ListProvider extends ContentProvider {
     private static final String sListIdSelection =
             ListContract.ListItemEntry.TABLE_NAME +
                     "." + ListContract.ListItemEntry.COLUMN_LIST_ID + " = ? ";
+
+    //list_item.list_id = ?
+    private static final String sListItemIdSelection =
+            ListContract.ListItemEntry.TABLE_NAME +
+                    "." + ListContract.ListItemEntry._ID + " = ? ";
+
+    private Cursor getListItemsById(Uri uri, String[] projection, String sortOrder) {
+        long listItemId = ListContract.ListItemEntry.getListIdFromUri(uri);
+
+        String[] selectionArgs;
+        String selection;
+
+        selection = sListItemIdSelection;
+        selectionArgs = new String[]{Long.toString(listItemId)};
+
+        return sListItemWithListQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
+    }
 
     private Cursor getListItemsByListItem(Uri uri, String[] projection, String sortOrder) {
         long listId = ListContract.ListItemEntry.getListIdFromUri(uri);
@@ -66,7 +91,8 @@ public class ListProvider extends ContentProvider {
         matcher.addURI(authority, ListContract.PATH_LIST, LIST);
         matcher.addURI(authority, ListContract.PATH_LIST_ITEM, LIST_ITEM);
 
-        matcher.addURI(authority, ListContract.PATH_LIST_ITEM + "/#", LIST_ITEM_WITH_LIST_ID);
+        matcher.addURI(authority, ListContract.PATH_LIST_ITEM + "/#", LIST_ITEM_WITH_ID);
+        matcher.addURI(authority, ListContract.PATH_LIST_ITEM_BY_LIST_ID + "/#", LIST_ITEM_WITH_LIST_ID);
 
         return matcher;
     }
@@ -86,6 +112,8 @@ public class ListProvider extends ContentProvider {
         switch (match) {
             case LIST_ITEM_WITH_LIST_ID:
                 return ListContract.ListItemEntry.CONTENT_ITEM_TYPE;
+            case LIST_ITEM_WITH_ID:
+                return ListContract.ListItemEntry.CONTENT_ITEM_TYPE;
             case LIST_ITEM:
                 return ListContract.ListItemEntry.CONTENT_TYPE;
             case LIST:
@@ -102,10 +130,16 @@ public class ListProvider extends ContentProvider {
         // and query the database accordingly.
         Cursor retCursor;
         switch (sUriMatcher.match(uri)) {
-            // "weather/*/*"
+            // "list_items"
             case LIST_ITEM_WITH_LIST_ID:
             {
                 retCursor = getListItemsByListItem(uri, projection, sortOrder);
+                break;
+            }
+            // "list_item"
+            case LIST_ITEM_WITH_ID:
+            {
+                retCursor = getListItemsById(uri, projection, sortOrder);
                 break;
             }
             // "list_item"

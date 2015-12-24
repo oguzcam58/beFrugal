@@ -1,6 +1,7 @@
 package com.example.oguzcam.befrugal;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -44,16 +45,17 @@ public class ListItemActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ContentValues values = new ContentValues();
-                values.put(ListContract.ListItemEntry.COLUMN_LIST_ID, mListId);
-                values.put(ListContract.ListItemEntry.COLUMN_LIST_ITEM_NAME, "Deneme");
-                values.put(ListContract.ListItemEntry.COLUMN_CREATION_DATE, new Date().getTime());
-                getContentResolver().insert(ListContract.ListItemEntry.CONTENT_URI, values);
+//                ContentValues values = new ContentValues();
+//                values.put(ListContract.ListItemEntry.COLUMN_LIST_ID, mListId);
+//                values.put(ListContract.ListItemEntry.COLUMN_LIST_ITEM_NAME, "Deneme");
+//                values.put(ListContract.ListItemEntry.COLUMN_CREATION_DATE, new Date().getTime());
+//                getContentResolver().insert(ListContract.ListItemEntry.CONTENT_URI, values);
 
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
 
-
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(ListItemActivity.this, ListItemDetailActivity.class);
+                startActivity(intent);
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

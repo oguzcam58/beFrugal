@@ -64,11 +64,11 @@ public class ListItemActivityFragment extends Fragment implements LoaderManager.
             Log.v(TAG, "mListId = " + mListId);
         }
 
-        ContentValues values = new ContentValues();
-        values.put(ListContract.ListItemEntry.COLUMN_LIST_ID, mListId);
-        values.put(ListContract.ListItemEntry.COLUMN_LIST_ITEM_NAME, "alican");
-        values.put(ListContract.ListItemEntry.COLUMN_CREATION_DATE, new Date().getTime());
-        getActivity().getContentResolver().insert(ListContract.ListItemEntry.CONTENT_URI, values);
+//        ContentValues values = new ContentValues();
+//        values.put(ListContract.ListItemEntry.COLUMN_LIST_ID, mListId);
+//        values.put(ListContract.ListItemEntry.COLUMN_LIST_ITEM_NAME, "alican");
+//        values.put(ListContract.ListItemEntry.COLUMN_CREATION_DATE, new Date().getTime());
+//        getActivity().getContentResolver().insert(ListContract.ListItemEntry.CONTENT_URI, values);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 

@@ -23,13 +23,15 @@ public class ListItemDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         if(savedInstanceState == null) {
+            ListItemDetailActivityFragment fragment = new ListItemDetailActivityFragment();
+
             Bundle arguments = new Bundle();
             Uri uri = getIntent().getData();
-            mListItemId = ListContract.ListItemEntry.getListIdFromUri(uri);
-            arguments.putParcelable(ListItemDetailActivityFragment.LIST_ITEM_DETAIL_URI, uri);
-
-            ListItemDetailActivityFragment fragment = new ListItemDetailActivityFragment();
-            fragment.setArguments(arguments);
+            if(uri != null) {
+                mListItemId = ListContract.ListItemEntry.getListIdFromUri(uri);
+                arguments.putParcelable(ListItemDetailActivityFragment.LIST_ITEM_DETAIL_URI, uri);
+                fragment.setArguments(arguments);
+            }
 
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.list_item_detail_container, fragment, LIST_ITEM_DETAIL_FRAGMENT_TAG)

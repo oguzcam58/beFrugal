@@ -9,27 +9,35 @@
     tools:context="com.example.oguzcam.befrugal.ListItemDetailActivityFragment">
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="55dp"
         android:paddingBottom="@dimen/activity_vertical_margin"
-        android:id="@+id/boughtQty"
+        android:paddingTop="55dp"
+        android:id="@+id/list_item_name"
         android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:hint="@string/new_list_name"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:padding="@dimen/activity_horizontal_margin"
+        android:id="@+id/bought_qty"
+        android:layout_below="@id/list_item_name"
         android:layout_alignParentStart="true"
         android:hint="@string/bought_qty"/>
 
     <Spinner
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingTop="55dp"
-        android:id="@+id/unitType"
-        android:layout_toEndOf="@id/boughtQty"
+        android:padding="@dimen/activity_horizontal_margin"
+        android:id="@+id/unit_type"
+        android:layout_below="@id/list_item_name"
+        android:layout_toEndOf="@id/bought_qty"
         android:layout_alignParentEnd="true"/>
 
     <EditText
@@ -37,8 +45,8 @@
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
         android:padding="@dimen/activity_vertical_margin"
-        android:id="@+id/unitAmount"
-        android:layout_below="@+id/unitType"
+        android:id="@+id/unit_amount"
+        android:layout_below="@+id/unit_type"
         android:layout_alignParentStart="true"
         android:hint="@string/unit_amount"/>
 
@@ -47,8 +55,8 @@
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
         android:padding="@dimen/activity_vertical_margin"
-        android:id="@+id/totalAmount"
-        android:layout_below="@+id/unitAmount"
+        android:id="@+id/total_amount"
+        android:layout_below="@+id/unit_amount"
         android:layout_alignParentEnd="true"
         android:hint="@string/total_amount"/>
 

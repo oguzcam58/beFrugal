@@ -14,6 +14,7 @@ public class ListContract {
 
     public static final String PATH_LIST = "list";
     public static final String PATH_LIST_ITEM = "list_item";
+    public static final String PATH_LIST_ITEM_BY_LIST_ID = "list_item_by_list_id";
 
     /* Inner class that defines the table contents of the list table */
     public static final class ListEntry implements BaseColumns {
@@ -42,6 +43,9 @@ public class ListContract {
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_LIST_ITEM).build();
 
+        public static final Uri CONTENT_URI_BY_LIST_ID =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_LIST_ITEM_BY_LIST_ID).build();
+
         public static final String CONTENT_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_LIST_ITEM;
         public static final String CONTENT_ITEM_TYPE =
@@ -65,7 +69,7 @@ public class ListContract {
         }
 
         public static Uri buildListItemWithListId(long listItemId) {
-            return CONTENT_URI.buildUpon().appendPath(Long.toString(listItemId)).build();
+            return CONTENT_URI_BY_LIST_ID.buildUpon().appendPath(Long.toString(listItemId)).build();
         }
 
         public static long getListIdFromUri(Uri uri) {
