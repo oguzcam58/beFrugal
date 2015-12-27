@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:id="@+id/list_items_container"
-    tools:context=".ListItemActivity">
+    tools:context="com.oguzcam.befrugal.ListItemActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"

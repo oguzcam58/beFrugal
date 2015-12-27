@@ -9,7 +9,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".ListItemActivity$PlaceholderFragment"
+    tools:context="com.oguzcam.befrugal.ListItemActivity$PlaceholderFragment"
     android:orientation="vertical">
 
     <ListView

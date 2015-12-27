@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="com.oguzcam.befrugal.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
@@ -25,31 +25,31 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ListItemActivity"
+            android:name="com.oguzcam.befrugal.ListItemActivity"
             android:label="@string/title_activity_list_items"
             android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName="com.oguzcam.befrugal.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.oguzcam.befrugal.MainActivity" />
+                android:value="com.oguzcam.befrugal.MainActivity" />
         </activity>
 
         <provider
-            android:name=".model.ListProvider"
+            android:name="com.oguzcam.befrugal.model.ListProvider"
             android:authorities="com.example.oguzcam.befrugal.app"
             android:enabled="true"
             android:exported="true"
             android:permission="com.example.oguzcam.befrugal.LICENCE_TO_KILL" />
 
         <activity
-            android:name=".ListItemDetailActivity"
+            android:name="com.oguzcam.befrugal.ListItemDetailActivity"
             android:label="@string/title_activity_list_item_detail"
-            android:parentActivityName=".ListItemActivity"
+            android:parentActivityName="com.oguzcam.befrugal.ListItemActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.oguzcam.befrugal.ListItemActivity" />
+                android:value="com.oguzcam.befrugal.ListItemActivity" />
         </activity>
     </application>
 
