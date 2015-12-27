@@ -62,6 +62,7 @@ public class ListDbHelper extends SQLiteOpenHelper {
                 ListItemEntry.COLUMN_TOTAL_AMOUNT + " REAL, " +
                 ListItemEntry.COLUMN_UNIT_TYPE + " TEXT, " +
                 ListItemEntry.COLUMN_UNIT_AMOUNT + " REAL, " +
+                ListItemEntry.COLUMN_PLACE_NAME + " TEXT, " +
                 ListItemEntry.COLUMN_DONE + " INTEGER NOT NULL DEFAULT 0, " +
                 // Set up the location column as a foreign key to location table.
                 " FOREIGN KEY (" + ListItemEntry.COLUMN_LIST_ID + ") REFERENCES " +

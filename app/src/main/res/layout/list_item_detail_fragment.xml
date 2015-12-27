@@ -14,7 +14,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.oguzcam.befrugal.ListItemDetailActivityFragment">
 
-    <EditText
+    <AutoCompleteTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textCapWords"
@@ -72,11 +72,10 @@
         android:layout_alignParentEnd="true"
         android:hint="@string/total_amount"/>
 
-    <EditText
+    <AutoCompleteTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
-        android:textAlignment="textEnd"
+        android:inputType="textCapWords"
         android:padding="@dimen/activity_vertical_margin"
         android:id="@+id/place_name"
         android:selectAllOnFocus="true"
@@ -90,7 +89,8 @@
         android:id="@+id/powered_by_google"
         android:layout_below="@id/place_name"
         android:layout_alignParentEnd="true"
-        android:src="@drawable/powered_by_google_light" />
+        android:src="@drawable/powered_by_google_light"
+        android:contentDescription="@string/google_logo"/>
 
     <CheckBox
         android:layout_width="match_parent"

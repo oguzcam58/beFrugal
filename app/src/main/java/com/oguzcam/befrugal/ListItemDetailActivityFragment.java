@@ -14,11 +14,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CursorAdapter;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
+import android.widget.TwoLineListItem;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.places.PlaceLikelihood;
+import com.google.android.gms.location.places.PlaceLikelihoodBuffer;
+import com.google.android.gms.location.places.Places;
 import com.oguzcam.befrugal.enums.BaseAmount;
 import com.oguzcam.befrugal.enums.UnitType;
 import com.oguzcam.befrugal.model.ListContract;
@@ -27,14 +40,17 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class ListItemDetailActivityFragment extends Fragment {
+public class ListItemDetailActivityFragment extends Fragment{
 
-    private static final String TAG = ListItemActivityFragment.class.getSimpleName();
+    private static final String TAG = ListItemDetailActivityFragment.class.getSimpleName();
 
     private static final String QTY = "QTY";
     private static final String UNIT = "UNIT";
@@ -52,16 +68,19 @@ public class ListItemDetailActivityFragment extends Fragment {
     private long mListId;
     private String mFirstItemName;
 
-    private EditText mListItemNameView;
+    private AutoCompleteTextView mListItemNameView;
     private EditText mBoughtQtyView;
     private EditText mUnitAmountView;
     private EditText mTotalAmountView;
     private Spinner mUnitTypeSpinner;
     private CheckBox mListItemDoneCheckBox;
+    private AutoCompleteTextView mPlaceNameView;
 
     private BaseAmount mBaseAmount;
     private double mOldTotalAmount;
     private long mOldDone;
+
+    private ArrayList<String> mPlaceList = new ArrayList<>();
 
     private final int COL_LIST_ITEM_ID = 0;
     private final int COL_LIST_ITEM_NAME = 1;
@@ -70,7 +89,8 @@ public class ListItemDetailActivityFragment extends Fragment {
     private final int COL_UNIT_TYPE = 4;
     private final int COL_TOTAL_AMOUNT = 5;
     private final int COL_LIST_ID = 6;
-    private final int COL_DONE = 7;
+    private final int COL_PLACE_NAME = 7;
+    private final int COL_DONE = 8;
 
     private final String[] projection = new String[] {
             ListContract.ListItemEntry.TABLE_NAME + "." + ListContract.ListItemEntry._ID,
@@ -80,10 +100,12 @@ public class ListItemDetailActivityFragment extends Fragment {
             ListContract.ListItemEntry.COLUMN_UNIT_TYPE,
             ListContract.ListItemEntry.COLUMN_TOTAL_AMOUNT,
             ListContract.ListItemEntry.COLUMN_LIST_ID,
+            ListContract.ListItemEntry.COLUMN_PLACE_NAME,
             ListContract.ListItemEntry.COLUMN_DONE
     };
 
     public ListItemDetailActivityFragment() {
+
     }
 
     @Override
@@ -91,7 +113,7 @@ public class ListItemDetailActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.list_item_detail_fragment, container, false);
 
-        mListItemNameView = (EditText) rootView.findViewById(R.id.list_item_name);
+        mListItemNameView = (AutoCompleteTextView) rootView.findViewById(R.id.list_item_name);
         mBoughtQtyView = (EditText) rootView.findViewById(R.id.bought_qty);
         mUnitAmountView = (EditText) rootView.findViewById(R.id.unit_amount);
         mTotalAmountView = (EditText) rootView.findViewById(R.id.total_amount);
@@ -101,9 +123,12 @@ public class ListItemDetailActivityFragment extends Fragment {
 
         ArrayAdapter<String> unitTypeAdapter = new ArrayAdapter<>(
                 getContext(),
-                android.R.layout.simple_spinner_item,
+                android.R.layout.simple_list_item_1,
                 UnitType.getFriendlyNames());
         mUnitTypeSpinner.setAdapter(unitTypeAdapter);
+
+        mPlaceNameView = (AutoCompleteTextView) rootView.findViewById(R.id.place_name);
+
         Button saveBtn = (Button) rootView.findViewById(R.id.list_item_detail_save);
 
         Bundle arguments = getArguments();
@@ -131,6 +156,7 @@ public class ListItemDetailActivityFragment extends Fragment {
                     mUnitAmountView.setText(Utility.asAmount(cursor.getDouble(COL_UNIT_AMOUNT)));
                     int spinnerPosition = unitTypeAdapter.getPosition(cursor.getString(COL_UNIT_TYPE));
                     mUnitTypeSpinner.setSelection(spinnerPosition);
+                    mPlaceNameView.setText(cursor.getString(COL_PLACE_NAME));
                     double totalAmount = cursor.getDouble(COL_TOTAL_AMOUNT);
                     mTotalAmountView.setText(Utility.asAmount(totalAmount));
                     mOldTotalAmount = totalAmount;
@@ -158,7 +184,7 @@ public class ListItemDetailActivityFragment extends Fragment {
         mUnitAmountView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus) {
+                if (!hasFocus) {
                     calculateAmount(UNIT);
                 } else {
                     lastFocus = UNIT;
@@ -176,6 +202,14 @@ public class ListItemDetailActivityFragment extends Fragment {
                 }
             }
         });
+
+        mPlaceNameView.setAdapter(new ArrayAdapter<String>(
+                getContext(),
+                android.R.layout.simple_list_item_1,
+                mPlaceList
+        ));
+
+        fillHistory();
 
         saveBtn.setOnClickListener(new Button.OnClickListener() {
             @Override
@@ -213,7 +247,7 @@ public class ListItemDetailActivityFragment extends Fragment {
                             && (!totalAmountText.isEmpty()
                             || mOldTotalAmount > 0)
                             ) {
-                        if(totalAmountText.isEmpty()) {
+                        if (totalAmountText.isEmpty()) {
                             totalAmountText = "0";
                         }
 
@@ -365,6 +399,8 @@ public class ListItemDetailActivityFragment extends Fragment {
             values.put(ListContract.ListItemEntry.COLUMN_TOTAL_AMOUNT, (Double) null);
         }
 
+        values.put(ListContract.ListItemEntry.COLUMN_PLACE_NAME, mPlaceNameView.getText().toString());
+
         // If done
         if (mListItemDoneCheckBox.isEnabled()) {
             if (mListItemDoneCheckBox.isChecked()) {
@@ -377,4 +413,54 @@ public class ListItemDetailActivityFragment extends Fragment {
         }
         return values;
     }
+
+    private void fillHistory() {
+        // since 30 days before
+        long time = new Date().getTime() - TimeUnit.DAYS.toMillis(30);
+        String where = ListContract.ListItemEntry.COLUMN_DONE + "=? AND "
+                + ListContract.ListItemEntry.COLUMN_DONE_TIME + ">?";
+        Cursor cursor = getContext().getContentResolver().query(
+                ListContract.ListItemEntry.CONTENT_URI,
+                new String[]{
+                        ListContract.ListItemEntry._ID,
+                        ListContract.ListItemEntry.COLUMN_LIST_ITEM_NAME,
+                        ListContract.ListItemEntry.COLUMN_UNIT_AMOUNT,
+                        ListContract.ListItemEntry.COLUMN_UNIT_TYPE,
+                        ListContract.ListItemEntry.COLUMN_PLACE_NAME
+                },
+                where,
+                new String[]{"1", Long.toString(time)},
+                null
+        );
+
+        // Get auto complete inside values with Cursor Adapter
+        if (cursor != null && cursor.moveToFirst()){
+            mListItemNameView.setAdapter(new SimpleCursorAdapter(
+                    getContext(),
+                    R.layout.auto_complete_list_row,
+                    cursor,
+                    new String[]{ListContract.ListItemEntry.COLUMN_LIST_ITEM_NAME,
+                            ListContract.ListItemEntry.COLUMN_UNIT_AMOUNT,
+                            ListContract.ListItemEntry.COLUMN_PLACE_NAME
+                    }, // from Cursor
+                    new int[]{R.id.list_item_title,
+                            R.id.list_item_unit_amount,
+                            R.id.place_name
+                    }, // to layout
+                    0
+            ) {
+                @Override
+                public CharSequence convertToString(Cursor cursor) {
+                    return cursor.getString(cursor.getColumnIndex(ListContract.ListItemEntry.COLUMN_LIST_ITEM_NAME));
+                }
+            });
+        }
+    }
+
+    public void addToPlaceList(String[] places) {
+        for (String place : places) {
+            mPlaceList.add(place);
+        }
+    }
+
 }

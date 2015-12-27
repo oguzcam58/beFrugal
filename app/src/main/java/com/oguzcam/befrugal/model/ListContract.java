@@ -69,6 +69,7 @@ public class ListContract {
         public static final String COLUMN_TOTAL_AMOUNT = "item_total_amount";
         public static final String COLUMN_UNIT_TYPE = "item_unit_type";
         public static final String COLUMN_UNIT_AMOUNT = "item_unit_amount";
+        public static final String COLUMN_PLACE_NAME = "item_place_name";
         public static final String COLUMN_DONE = "item_done";
 
         public static Uri buildListItemUri(long id) {

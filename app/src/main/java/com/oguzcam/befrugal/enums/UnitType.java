@@ -13,7 +13,7 @@ public enum UnitType {
     // box
     BOX("Box"),
     // kilogram
-    KG("Kg"),
+    KG("Kilogram"),
     // gram
     GR("Gram"),
     // liter

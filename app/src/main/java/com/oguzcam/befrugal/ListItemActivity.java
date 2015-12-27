@@ -1,6 +1,7 @@
 package com.oguzcam.befrugal;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -29,6 +30,16 @@ public class ListItemActivity extends AppCompatActivity {
             Uri uri = getIntent().getData();
             mListId = ListContract.ListItemEntry.getListIdFromUri(uri);
             arguments.putParcelable(ListItemActivityFragment.LIST_DETAIL_URI, uri);
+
+            Cursor cursor = getContentResolver().query(ListContract.ListEntry.CONTENT_URI,
+                    new String[]{ListContract.ListEntry.COLUMN_LIST_NAME},
+                    ListContract.ListEntry._ID + "=?",
+                    new String[]{Long.toString(mListId)},
+                    null
+                    );
+            if (cursor != null && cursor.moveToFirst()) {
+                setTitle(cursor.getString(0));
+            }
 
             ListItemActivityFragment fragment = new ListItemActivityFragment();
             fragment.setArguments(arguments);

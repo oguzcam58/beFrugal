@@ -18,7 +18,7 @@
     <string name="delete_snackbar">%s has been deleted successfully.</string>
 
     <!-- List item detail -->
-    <string name="title_activity_list_item_detail">ListItemDetailActivity</string>
+    <string name="title_activity_list_item_detail">Item Detail</string>
     <string name="total_amount">Total Amount</string>
     <string name="bought_qty">Bought Quantity</string>
     <string name="unit_type">Unit Type</string>
@@ -31,6 +31,8 @@
     <string name="not_available">N/A</string>
     <string name="delete_item">Delete Item</string>
     <string name="place_name">Where do you buy from?</string>
+    <string name="google_logo" translatable="false">Google Logo</string>
+    <string name="place_label">Place</string>
 
 
 </resources>

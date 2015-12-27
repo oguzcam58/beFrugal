@@ -25,4 +25,5 @@
     <string name="update_list_name">Liste İsmini Güncelle</string>
     <string name="delete_item">Nesneyi Sil</string>
     <string name="place_name">Aldığınız Yerin İsmi</string>
+    <string name="place_label">Alınan Yer</string>
 </resources>
