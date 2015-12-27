@@ -21,7 +21,6 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.example.oguzcam.befrugal.R;
 import com.oguzcam.befrugal.model.ListContract;
 
 import java.util.Date;
@@ -35,13 +34,17 @@ public class ShoppingListFragment extends Fragment implements LoaderManager.Load
 
     private static final String[] LIST_COLUMNS = {
             ListContract.ListEntry._ID,
-            ListContract.ListEntry.COLUMN_LIST_NAME
+            ListContract.ListEntry.COLUMN_LIST_NAME,
+            ListContract.ListEntry.COLUMN_TOTAL_AMOUNT,
+            ListContract.ListEntry.COLUMN_DONE
     };
 
     // These indices are tied to LIST_COLUMNS. If LIST_COLUMNS changes, these
     // must change.
     static final int COL_LIST_ID = 0;
     static final int COL_LIST_NAME = 1;
+    static final int COL_TOTAL_AMOUNT = 2;
+    static final int COL_DONE = 3;
 
     private static final int LIST_LOADER = 0;
     private ShoppingListAdapter mListAdapter;
@@ -96,7 +99,13 @@ public class ShoppingListFragment extends Fragment implements LoaderManager.Load
         alertDialogBuilder.setTitle(cursor.getString(COL_LIST_NAME));
         // set dialog content
         alertDialogBuilder
-                .setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.select_dialog_item, new String[]{"Delete List", "Update List Name"}),
+                .setAdapter(new ArrayAdapter<String>(
+                                getActivity(),
+                                android.R.layout.select_dialog_item,
+                                new String[]{
+                                        getString(R.string.delete_list),
+                                        getString(R.string.update_list_name)
+                                }),
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -131,6 +140,13 @@ public class ShoppingListFragment extends Fragment implements LoaderManager.Load
                 .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
+                        // Delete items in the list
+                        getActivity().getContentResolver().delete(
+                                ListContract.ListItemEntry.CONTENT_URI,
+                                ListContract.ListItemEntry.COLUMN_LIST_ID + "=?",
+                                new String[]{(Long.toString(cursor.getLong(COL_LIST_ID)))});
+
+                        // Delete the list
                         getActivity().getContentResolver().delete(
                                 ListContract.ListEntry.CONTENT_URI,
                                 ListContract.ListEntry._ID + "=?",
@@ -176,7 +192,7 @@ public class ShoppingListFragment extends Fragment implements LoaderManager.Load
                     public void onClick(DialogInterface dialog, int which) {
                         final String newListName = editText.getText().toString();
                         ContentValues values = new ContentValues();
-                        values.put(ListContract.ListEntry.COLUMN_CREATION_DATE, new Date().getTime());
+                        values.put(ListContract.ListEntry.COLUMN_LAST_UPDATED_TIME, new Date().getTime());
                         values.put(ListContract.ListEntry.COLUMN_LIST_NAME, newListName);
 
                         getActivity().getContentResolver().update(
@@ -206,6 +222,16 @@ public class ShoppingListFragment extends Fragment implements LoaderManager.Load
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        restartLoader();
+    }
+
+    private void restartLoader() {
+        getLoaderManager().restartLoader(LIST_LOADER, null, this);
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         getLoaderManager().initLoader(LIST_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
@@ -213,15 +239,19 @@ public class ShoppingListFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String sortOrder = ListContract.ListEntry.COLUMN_CREATION_DATE + " DESC ";
-        Uri weatherForLocationUri = ListContract.ListEntry.buildListUri();
-        if ( null != weatherForLocationUri ) {
+        StringBuilder sortOrder = new StringBuilder();
+        sortOrder
+                .append(ListContract.ListEntry.COLUMN_DONE + " ASC, ")
+                .append(ListContract.ListEntry.COLUMN_LAST_UPDATED_TIME + " DESC ");
+
+        Uri listUri = ListContract.ListEntry.buildListUri();
+        if ( null != listUri ) {
             return new CursorLoader(getActivity(),
-                    weatherForLocationUri,
+                    listUri,
                     LIST_COLUMNS,
                     null,
                     null,
-                    sortOrder
+                    sortOrder.toString()
             );
         }
         return null;

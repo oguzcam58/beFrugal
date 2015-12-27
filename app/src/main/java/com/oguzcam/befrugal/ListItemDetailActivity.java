@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-import com.example.oguzcam.befrugal.R;
+import com.oguzcam.befrugal.R;
 import com.oguzcam.befrugal.model.ListContract;
 
 public class ListItemDetailActivity extends AppCompatActivity {

@@ -1,5 +1,6 @@
 package com.oguzcam.befrugal;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
@@ -11,10 +12,12 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import com.example.oguzcam.befrugal.R;
+import com.oguzcam.befrugal.model.ListContract;
+
+import java.util.Date;
 
 /**
- * {@link ListItemListAdapter} exposes a list of weather forecasts
+ * {@link ListItemListAdapter} exposes a list of items
  * from a {@link Cursor} to a {@link android.widget.ListView}.
  */
 public class ListItemListAdapter extends CursorAdapter {
@@ -39,37 +42,80 @@ public class ListItemListAdapter extends CursorAdapter {
         This is where we fill-in the views with the contents of the cursor.
      */
     @Override
-    public void bindView(View view, Context context, final Cursor cursor) {
+    public void bindView(View view, final Context context, final Cursor cursor) {
         final ViewHolder viewHolder = (ViewHolder) view.getTag();
 
-        viewHolder.curentCursorPosition = cursor.getPosition();
-
-        Log.v(TAG, cursor.getString(ListItemActivityFragment.COL_LIST_ITEM_ID));
+        viewHolder.currentCursorPosition = cursor.getPosition();
 
         String listTitle = cursor.getString(ListItemActivityFragment.COL_LIST_ITEM_NAME);
         viewHolder.listTitleView.setText(listTitle);
-        String listUnitAmount = cursor.getString(ListItemActivityFragment.COL_UNIT_AMOUNT);
-        if (listUnitAmount != null && !listUnitAmount.trim().isEmpty()) {
-            viewHolder.listUnitAmountView.setText(listUnitAmount);
+
+        Double listUnitAmount = cursor.getDouble(ListItemActivityFragment.COL_UNIT_AMOUNT);
+        if (listUnitAmount > 0) {
+            viewHolder.listUnitAmountView.setText(Double.toString(listUnitAmount));
         } else {
             viewHolder.listUnitAmountView.setText(R.string.not_available);
         }
-        String listTotalAmount = cursor.getString(ListItemActivityFragment.COL_TOTAL_AMOUNT);
-        if (listTotalAmount != null && !listTotalAmount.trim().isEmpty()) {
-            viewHolder.listTotalAmountView.setText(listTotalAmount);
+
+        Double listTotalAmount = cursor.getDouble(ListItemActivityFragment.COL_TOTAL_AMOUNT);
+        if (listTotalAmount > 0) {
+            viewHolder.listTotalAmountView.setText(Double.toString(listTotalAmount));
         } else {
             viewHolder.listTotalAmountView.setText(R.string.not_available);
         }
 
+        if (cursor.getLong(ListItemActivityFragment.COL_DONE) > 0) {
+            viewHolder.selectCheckBox.setChecked(true);
+        } else {
+            viewHolder.selectCheckBox.setChecked(false);
+        }
+        viewHolder.isLoaded = true;
+
         viewHolder.selectCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                cursor.moveToPosition(viewHolder.curentCursorPosition);
-                if(isChecked){
-                    // TODO: Make them done or undone
-                    Log.v(TAG, "Checked" + cursor.getLong(ListItemActivityFragment.COL_LIST_ITEM_ID));
-                } else {
-                    Log.v(TAG, "Unchecked" + cursor.getLong(ListItemActivityFragment.COL_LIST_ITEM_ID));
+                if(!viewHolder.isLoaded || cursor.isClosed()) {
+                    return;
+                }
+
+                cursor.moveToPosition(viewHolder.currentCursorPosition);
+                final String itemId = cursor.getString(ListItemActivityFragment.COL_LIST_ITEM_ID);
+                final long listId = cursor.getLong(ListItemActivityFragment.COL_LIST_ID);
+                final long done = cursor.getLong(ListItemActivityFragment.COL_DONE);
+                final double totalAmount = cursor.getDouble(ListItemActivityFragment.COL_TOTAL_AMOUNT);
+
+                final String where = ListContract.ListItemEntry._ID + "=?";
+
+                boolean isDone = done == 1;
+
+                if(isChecked && !isDone){
+                    ContentValues values = new ContentValues();
+                    values.put(ListContract.ListItemEntry.COLUMN_DONE, 1);
+                    values.put(ListContract.ListItemEntry.COLUMN_DONE_TIME, new Date().getTime());
+
+                    context.getContentResolver().update(
+                            ListContract.ListItemEntry.CONTENT_URI,
+                            values,
+                            where,
+                            new String[]{itemId});
+
+                    Utility.addToListTotalAmount(context, listId, totalAmount);
+
+                    Log.v(TAG, itemId + " is converted to done.");
+                } else if (!isChecked && isDone) {
+                    ContentValues values = new ContentValues();
+                    values.put(ListContract.ListItemEntry.COLUMN_DONE, 0);
+                    values.put(ListContract.ListItemEntry.COLUMN_DONE_TIME, (Long) null);
+
+                    context.getContentResolver().update(
+                            ListContract.ListItemEntry.CONTENT_URI,
+                            values,
+                            where,
+                            new String[]{itemId});
+
+                    Utility.addToListTotalAmount(context, listId, totalAmount * -1);
+
+                    Log.v(TAG, itemId + " is converted to not done.");
                 }
             }
         });
@@ -83,7 +129,8 @@ public class ListItemListAdapter extends CursorAdapter {
         public final TextView listUnitAmountView;
         public final TextView listTotalAmountView;
         public final CheckBox selectCheckBox;
-        public int curentCursorPosition;
+        public int currentCursorPosition;
+        public boolean isLoaded;
 
         public ViewHolder(View view) {
             listTitleView = (TextView) view.findViewById(R.id.list_item_title);

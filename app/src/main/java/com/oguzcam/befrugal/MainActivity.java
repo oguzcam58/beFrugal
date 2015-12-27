@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.example.oguzcam.befrugal.R;
 import com.oguzcam.befrugal.model.ListContract;
 
 import java.util.Date;
@@ -92,7 +91,9 @@ public class MainActivity extends AppCompatActivity {
                                     .show();
                         } else {
                             ContentValues values = new ContentValues();
-                            values.put(ListContract.ListEntry.COLUMN_CREATION_DATE, new Date().getTime());
+                            long time = new Date().getTime();
+                            values.put(ListContract.ListEntry.COLUMN_CREATION_TIME, time);
+                            values.put(ListContract.ListEntry.COLUMN_LAST_UPDATED_TIME, time);
                             values.put(ListContract.ListEntry.COLUMN_LIST_NAME, listName);
 
                             getContentResolver().insert(ListContract.ListEntry.CONTENT_URI, values);

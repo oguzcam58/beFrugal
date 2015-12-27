@@ -1,8 +1,11 @@
 package com.oguzcam.befrugal;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -13,9 +16,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.example.oguzcam.befrugal.R;
 import com.oguzcam.befrugal.model.ListContract;
 
 /**
@@ -26,7 +29,6 @@ public class ListItemActivityFragment extends Fragment implements LoaderManager.
     private static final String TAG = ListItemActivityFragment.class.getSimpleName();
 
     private Uri mUri;
-    private long mListId;
     static final String LIST_DETAIL_URI = "LD_URI";
 
     private static final int LIST_ITEM_LOADER = 0;
@@ -36,13 +38,17 @@ public class ListItemActivityFragment extends Fragment implements LoaderManager.
             ListContract.ListItemEntry.TABLE_NAME + "." + ListContract.ListItemEntry._ID,
             ListContract.ListItemEntry.COLUMN_LIST_ITEM_NAME,
             ListContract.ListItemEntry.COLUMN_UNIT_AMOUNT,
-            ListContract.ListItemEntry.COLUMN_TOTAL_AMOUNT
+            ListContract.ListItemEntry.COLUMN_TOTAL_AMOUNT,
+            ListContract.ListItemEntry.COLUMN_DONE,
+            ListContract.ListItemEntry.COLUMN_LIST_ID
     };
 
     public static final int COL_LIST_ITEM_ID = 0;
     public static final int COL_LIST_ITEM_NAME = 1;
     public static final int COL_UNIT_AMOUNT = 2;
     public static final int COL_TOTAL_AMOUNT = 3;
+    public static final int COL_DONE = 4;
+    public static final int COL_LIST_ID = 5;
 
     public ListItemActivityFragment() {
     }
@@ -61,16 +67,7 @@ public class ListItemActivityFragment extends Fragment implements LoaderManager.
         Bundle arguments = getArguments();
         if (arguments != null) {
             mUri = arguments.getParcelable(ListItemActivityFragment.LIST_DETAIL_URI);
-            Log.v(TAG, "mUri = " + mUri);
-            mListId = ListContract.ListItemEntry.getListIdFromUri(mUri);
-            Log.v(TAG, "mListId = " + mListId);
         }
-
-//        ContentValues values = new ContentValues();
-//        values.put(ListContract.ListItemEntry.COLUMN_LIST_ID, mListId);
-//        values.put(ListContract.ListItemEntry.COLUMN_LIST_ITEM_NAME, "alican");
-//        values.put(ListContract.ListItemEntry.COLUMN_CREATION_DATE, new Date().getTime());
-//        getActivity().getContentResolver().insert(ListContract.ListItemEntry.CONTENT_URI, values);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -83,12 +80,110 @@ public class ListItemActivityFragment extends Fragment implements LoaderManager.
                 startActivity(intent);
             }
         });
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+            @Override
+            public boolean onItemLongClick(AdapterView adapterView, View view, int position, long l) {
+                Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
+                if (cursor != null) {
+                    showListOptionsDialog(cursor);
+                }
+                return true;
+            }
+        });
+
         return rootView;
+    }
+
+    // Show delete update options
+    private void showListOptionsDialog(final Cursor cursor) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        // set title
+        alertDialogBuilder.setTitle(cursor.getString(COL_LIST_ITEM_NAME));
+        // set dialog content
+        alertDialogBuilder
+                .setAdapter(new ArrayAdapter<String>(
+                                getActivity(),
+                                android.R.layout.select_dialog_item,
+                                new String[]{getString(R.string.delete_item)}),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which) {
+                                    case 0:
+                                        showDeleteConfirmationDialog(cursor);
+                                        break;
+                                    default:
+                                        Log.v(TAG, "Default case called!" + cursor.getString(COL_LIST_ITEM_NAME));
+                                        break;
+                                }
+                            }
+                        });
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+    }
+
+    private void showDeleteConfirmationDialog(final Cursor cursor) {
+        final String listName = cursor.getString(COL_LIST_ITEM_NAME);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        // set dialog content
+        alertDialogBuilder
+                .setMessage(getString(R.string.delete_confirmation, listName))
+                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        long listItemId = cursor.getLong(COL_LIST_ITEM_ID);
+                        deleteTotalAmount(cursor);
+
+                        getActivity().getContentResolver().delete(
+                                ListContract.ListItemEntry.CONTENT_URI,
+                                ListContract.ListItemEntry._ID + "=?",
+                                new String[]{(Long.toString(listItemId))});
+                        Snackbar.make(getView(),
+                                getString(R.string.delete_snackbar, listName),
+                                Snackbar.LENGTH_LONG)
+                                .show();
+
+                        restartLoader();
+                    }
+                })
+                .setCancelable(false)
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+    }
+
+    private void deleteTotalAmount(final Cursor cursor) {
+        long listId = cursor.getLong(COL_LIST_ID);
+        double totalAmount = cursor.getDouble(COL_TOTAL_AMOUNT);
+        int done = cursor.getInt(COL_DONE);
+
+        if (done == 1 && totalAmount > 0) {
+            Utility.addToListTotalAmount(getContext(), listId, totalAmount * -1);
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        restartLoader();
+    }
+
+    private void restartLoader() {
         getLoaderManager().restartLoader(LIST_ITEM_LOADER, null, this);
     }
 
@@ -101,14 +196,17 @@ public class ListItemActivityFragment extends Fragment implements LoaderManager.
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if ( null != mUri ) {
-            String sortOrder = ListContract.ListItemEntry.COLUMN_CREATION_DATE + " DESC ";
+            StringBuilder sortOrder = new StringBuilder();
+            sortOrder
+                    .append(ListContract.ListItemEntry.COLUMN_DONE + " ASC, ")
+                    .append(ListContract.ListItemEntry.COLUMN_LAST_UPDATED_TIME + " DESC ");
 
             return new CursorLoader(getActivity(),
                     mUri,
                     LIST_COLUMNS,
                     null,
                     null,
-                    sortOrder
+                    sortOrder.toString()
             );
         }
         return null;
@@ -118,6 +216,8 @@ public class ListItemActivityFragment extends Fragment implements LoaderManager.
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (data != null && data.moveToFirst()) {
             mListAdapter.swapCursor(data);
+        } else {
+           mListAdapter.swapCursor(null);
         }
     }
 

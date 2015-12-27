@@ -8,6 +8,8 @@
     <string name="update">Update</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
+    <string name="delete_list">Delete List</string>
+    <string name="update_list_name">Update List Name</string>
     <string name="delete_confirmation">Do you really want to delete %s?</string>
 
     <!-- Snackbar Messages -->
@@ -27,6 +29,8 @@
     <string name="error_list_item_name_empty">Error: List item name cannot be empty!</string>
     <string name="done">Done</string>
     <string name="not_available">N/A</string>
+    <string name="delete_item">Delete Item</string>
+    <string name="place_name">Where do you buy from?</string>
 
 
 </resources>

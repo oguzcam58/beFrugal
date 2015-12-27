@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.oguzcam.befrugal">
+    package="com.oguzcam.befrugal">
 
     <permission
-        android:name="com.example.oguzcam.befrugal.LICENCE_TO_KILL"
+        android:name="com.oguzcam.befrugal.LICENCE_TO_KILL"
         android:label="Licenced to kill"
         android:protectionLevel="dangerous" />
 
@@ -13,6 +13,11 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="ADD_YOUR_API_KEY_HERE"/>
+
         <activity
             android:name="com.oguzcam.befrugal.MainActivity"
             android:label="@string/app_name"
@@ -37,10 +42,10 @@
 
         <provider
             android:name="com.oguzcam.befrugal.model.ListProvider"
-            android:authorities="com.example.oguzcam.befrugal.app"
+            android:authorities="com.oguzcam.befrugal.app"
             android:enabled="true"
             android:exported="true"
-            android:permission="com.example.oguzcam.befrugal.LICENCE_TO_KILL" />
+            android:permission="com.oguzcam.befrugal.LICENCE_TO_KILL" />
 
         <activity
             android:name="com.oguzcam.befrugal.ListItemDetailActivity"

@@ -21,4 +21,8 @@
     <string name="unit_type">Birim Tipi</string>
     <string name="update">Güncelle</string>
     <string name="update_snackbar">%1$s başarıyla %2$s olarak güncellendi.</string>
+    <string name="delete_list">Listeyi Sil</string>
+    <string name="update_list_name">Liste İsmini Güncelle</string>
+    <string name="delete_item">Nesneyi Sil</string>
+    <string name="place_name">Aldığınız Yerin İsmi</string>
 </resources>

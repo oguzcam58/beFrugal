@@ -72,12 +72,32 @@
         android:layout_alignParentEnd="true"
         android:hint="@string/total_amount"/>
 
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:textAlignment="textEnd"
+        android:padding="@dimen/activity_vertical_margin"
+        android:id="@+id/place_name"
+        android:selectAllOnFocus="true"
+        android:layout_below="@id/total_amount"
+        android:layout_alignParentEnd="true"
+        android:hint="@string/place_name"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/powered_by_google"
+        android:layout_below="@id/place_name"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/powered_by_google_light" />
+
     <CheckBox
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/activity_vertical_margin"
         android:id="@+id/list_item_done"
-        android:layout_below="@id/total_amount"
+        android:layout_below="@id/powered_by_google"
         android:layout_alignParentEnd="true"
         android:text="@string/done"
         android:enabled="false"/>
