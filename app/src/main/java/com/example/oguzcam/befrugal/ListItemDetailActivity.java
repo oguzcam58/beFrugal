@@ -31,6 +31,12 @@ public class ListItemDetailActivity extends AppCompatActivity {
                 mListItemId = ListContract.ListItemEntry.getListIdFromUri(uri);
                 arguments.putParcelable(ListItemDetailActivityFragment.LIST_ITEM_DETAIL_URI, uri);
                 fragment.setArguments(arguments);
+            } else {
+                mListItemId = getIntent().getLongExtra(ListItemDetailActivityFragment.LIST_ITEM_DETAIL_LIST_ID, 0);
+                if(mListItemId != 0) {
+                    arguments.putLong(ListItemDetailActivityFragment.LIST_ITEM_DETAIL_LIST_ID, mListItemId);
+                    fragment.setArguments(arguments);
+                }
             }
 
             getSupportFragmentManager().beginTransaction()

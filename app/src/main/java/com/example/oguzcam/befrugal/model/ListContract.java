@@ -30,6 +30,7 @@ public class ListContract {
 
         public static final String COLUMN_LIST_NAME = "list_name";
         public static final String COLUMN_CREATION_DATE = "creation_date";
+        public static final String COLUMN_DONE = "done";
 
 
         public static Uri buildListUri() {
@@ -63,6 +64,7 @@ public class ListContract {
         public static final String COLUMN_TOTAL_AMOUNT = "total_amount";
         public static final String COLUMN_UNIT_TYPE = "unit_type";
         public static final String COLUMN_UNIT_AMOUNT = "unit_amount";
+        public static final String COLUMN_DONE = "done";
 
         public static Uri buildListItemUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);

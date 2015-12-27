@@ -1,7 +1,13 @@
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fillViewport="true">
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -11,7 +17,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
+        android:inputType="textCapWords"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingBottom="@dimen/activity_vertical_margin"
@@ -19,14 +25,16 @@
         android:id="@+id/list_item_name"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:hint="@string/new_list_name"/>
+        android:hint="@string/list_name"/>
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
+        android:textAlignment="textEnd"
         android:padding="@dimen/activity_horizontal_margin"
         android:id="@+id/bought_qty"
+        android:selectAllOnFocus="true"
         android:layout_below="@id/list_item_name"
         android:layout_alignParentStart="true"
         android:hint="@string/bought_qty"/>
@@ -44,9 +52,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
+        android:textAlignment="textEnd"
         android:padding="@dimen/activity_vertical_margin"
         android:id="@+id/unit_amount"
-        android:layout_below="@+id/unit_type"
+        android:selectAllOnFocus="true"
+        android:layout_below="@id/unit_type"
         android:layout_alignParentStart="true"
         android:hint="@string/unit_amount"/>
 
@@ -54,17 +64,32 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
+        android:textAlignment="textEnd"
         android:padding="@dimen/activity_vertical_margin"
         android:id="@+id/total_amount"
-        android:layout_below="@+id/unit_amount"
+        android:selectAllOnFocus="true"
+        android:layout_below="@id/unit_amount"
         android:layout_alignParentEnd="true"
         android:hint="@string/total_amount"/>
+
+    <CheckBox
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/activity_vertical_margin"
+        android:id="@+id/list_item_done"
+        android:layout_below="@id/total_amount"
+        android:layout_alignParentEnd="true"
+        android:text="@string/done"
+        android:enabled="false"/>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@id/list_item_done"
+        android:layout_alignParentStart="true"
         android:background="@color/colorPrimary"
         android:textColor="@android:color/white"
-        android:text="@string/done"/>
+        android:id="@+id/list_item_detail_save"
+        android:text="@string/add"/>
 </RelativeLayout>
+</ScrollView>

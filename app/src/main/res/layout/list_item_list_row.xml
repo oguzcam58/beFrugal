@@ -8,10 +8,61 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".ListItemActivityFragment">
 
+    <CheckBox
+        android:gravity="top|start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/activity_horizontal_margin"
+        android:id="@+id/list_item_select"
+        android:focusable="false"/>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/list_item_select"
+        android:paddingTop="@dimen/check_box_padding_top"
+        android:paddingLeft="@dimen/check_box_padding_top"
         android:id="@+id/list_item_title"
         android:text="@string/add"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/list_item_unit_amount"
+        android:layout_below="@id/list_item_title"
+        android:layout_alignParentEnd="true"
+        android:text="@string/add"
+        android:textColor="@android:color/darker_gray"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/list_item_unit_amount_label"
+        android:paddingStart="@dimen/activity_horizontal_margin"
+        android:paddingEnd="@dimen/activity_horizontal_margin"
+        android:layout_below="@id/list_item_title"
+        android:layout_toStartOf="@id/list_item_unit_amount"
+        android:text="@string/unit_amount"
+        android:textColor="@android:color/darker_gray"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/list_item_total_amount"
+        android:layout_below="@id/list_item_unit_amount"
+        android:layout_alignParentEnd="true"
+        android:text="@string/add"
+        android:textColor="@android:color/darker_gray"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/list_item_total_amount_label"
+        android:paddingStart="@dimen/activity_horizontal_margin"
+        android:paddingEnd="@dimen/activity_horizontal_margin"
+        android:layout_below="@id/list_item_unit_amount"
+        android:layout_toStartOf="@id/list_item_total_amount"
+        android:text="@string/total_amount"
+        android:textColor="@android:color/darker_gray"/>
 
 </RelativeLayout>

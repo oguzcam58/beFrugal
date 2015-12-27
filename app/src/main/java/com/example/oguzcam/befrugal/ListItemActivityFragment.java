@@ -36,11 +36,15 @@ public class ListItemActivityFragment extends Fragment implements LoaderManager.
 
     private static final String[] LIST_COLUMNS = {
             ListContract.ListItemEntry.TABLE_NAME + "." + ListContract.ListItemEntry._ID,
-            ListContract.ListItemEntry.COLUMN_LIST_ITEM_NAME
+            ListContract.ListItemEntry.COLUMN_LIST_ITEM_NAME,
+            ListContract.ListItemEntry.COLUMN_UNIT_AMOUNT,
+            ListContract.ListItemEntry.COLUMN_TOTAL_AMOUNT
     };
 
-    private static final int COL_LIST_ITEM_ID = 0;
-    private static final int COL_LIST_ITEM_NAME = 1;
+    public static final int COL_LIST_ITEM_ID = 0;
+    public static final int COL_LIST_ITEM_NAME = 1;
+    public static final int COL_UNIT_AMOUNT = 2;
+    public static final int COL_TOTAL_AMOUNT = 3;
 
     public ListItemActivityFragment() {
     }
@@ -82,6 +86,12 @@ public class ListItemActivityFragment extends Fragment implements LoaderManager.
             }
         });
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getLoaderManager().restartLoader(LIST_ITEM_LOADER, null, this);
     }
 
     @Override

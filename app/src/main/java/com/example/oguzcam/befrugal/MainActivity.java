@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.oguzcam.befrugal.model.ListContract;
@@ -58,21 +59,7 @@ public class MainActivity extends AppCompatActivity {
         alertDialogBuilder
                 .setView(dialogView)
                 .setCancelable(false)
-                .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int id) {
-                        final String listName = ((EditText) dialogView.findViewById(R.id.new_list_name)).getText().toString();
-                        ContentValues values = new ContentValues();
-                        values.put(ListContract.ListEntry.COLUMN_CREATION_DATE, new Date().getTime());
-                        values.put(ListContract.ListEntry.COLUMN_LIST_NAME, listName);
-
-                        getContentResolver().insert(ListContract.ListEntry.CONTENT_URI, values);
-
-                        Snackbar.make(findViewById(android.R.id.content),
-                                getString(R.string.add_snackbar, listName),
-                                Snackbar.LENGTH_LONG)
-                                .show();
-                    }
-                })
+                .setPositiveButton(R.string.add, null)
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // if this button is clicked, just close
@@ -82,7 +69,44 @@ public class MainActivity extends AppCompatActivity {
                 });
 
         // create alert dialog
-        AlertDialog alertDialog = alertDialogBuilder.create();
+        final AlertDialog alertDialog = alertDialogBuilder.create();
+
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(DialogInterface dialog) {
+
+                Button btn = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                btn.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        final String listName = ((EditText) dialogView.findViewById(R.id.new_list_name)).getText().toString();
+
+                        // Create new list entry if list name is provided
+                        if (listName.trim().isEmpty()) {
+                            Snackbar.make(dialogView,
+                                    getString(R.string.error_list_name_empty),
+                                    Snackbar.LENGTH_LONG)
+                                    .show();
+                        } else {
+                            ContentValues values = new ContentValues();
+                            values.put(ListContract.ListEntry.COLUMN_CREATION_DATE, new Date().getTime());
+                            values.put(ListContract.ListEntry.COLUMN_LIST_NAME, listName);
+
+                            getContentResolver().insert(ListContract.ListEntry.CONTENT_URI, values);
+
+                            Snackbar.make(findViewById(android.R.id.content),
+                                    getString(R.string.add_snackbar, listName),
+                                    Snackbar.LENGTH_LONG)
+                                    .show();
+                            //Dismiss once everything is OK.
+                            alertDialog.dismiss();
+                        }
+                    }
+                });
+            }
+        });
 
         // show it
         alertDialog.show();

@@ -42,7 +42,8 @@ public class ListDbHelper extends SQLiteOpenHelper {
                 ListEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
 
                 ListEntry.COLUMN_LIST_NAME + " TEXT NOT NULL, " +
-                ListEntry.COLUMN_CREATION_DATE + " INTEGER NOT NULL);";
+                ListEntry.COLUMN_CREATION_DATE + " INTEGER NOT NULL, " +
+                ListEntry.COLUMN_DONE + " INTEGER NOT NULL DEFAULT 0);";
         sqLiteDatabase.execSQL(SQL_CREATE_LIST_TABLE);
 
         final String SQL_CREATE_LIST_ITEM_TABLE = "CREATE TABLE " + ListItemEntry.TABLE_NAME + " (" +
@@ -56,7 +57,7 @@ public class ListDbHelper extends SQLiteOpenHelper {
                 ListItemEntry.COLUMN_TOTAL_AMOUNT + " REAL, " +
                 ListItemEntry.COLUMN_UNIT_TYPE + " TEXT, " +
                 ListItemEntry.COLUMN_UNIT_AMOUNT + " REAL, " +
-
+                ListItemEntry.COLUMN_DONE + " INTEGER NOT NULL DEFAULT 0, " +
                 // Set up the location column as a foreign key to location table.
                 " FOREIGN KEY (" + ListItemEntry.COLUMN_LIST_ID + ") REFERENCES " +
                 ListEntry.TABLE_NAME + " (" + ListEntry._ID + "));";

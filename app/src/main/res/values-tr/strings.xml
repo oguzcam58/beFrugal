@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Be Frugal</string>
+    <string name="action_settings">Ayarlar</string>
+    <string name="add">Ekle</string>
+    <string name="add_snackbar">%s başarıyla eklendi.</string>
+    <string name="bought_qty">Alınan miktar</string>
+    <string name="cancel">İptal</string>
+    <string name="delete">Sil</string>
+    <string name="delete_confirmation">%s yi gerçekten silmek istiyor musunuz?</string>
+    <string name="delete_snackbar">%s başarıyla silindi.</string>
+    <string name="done">Aldım</string>
+    <string name="error_list_item_name_empty">Hata: Nesnenin ismini belirlemelisiniz!</string>
+    <string name="error_list_name_empty">Hata: Listenin ismini belirlemelisiniz!</string>
+    <string name="list_name">Liste İsmi</string>
+    <string name="not_available">Bilgi Yok</string>
+    <string name="save">Kaydet</string>
+    <string name="title_activity_list_item_detail">Nesne Detay</string>
+    <string name="title_activity_list_items">Listedeki nesneler</string>
+    <string name="total_amount">Toplam Fiyat</string>
+    <string name="unit_amount">Birim Fiyat</string>
+    <string name="unit_type">Birim Tipi</string>
+    <string name="update">Güncelle</string>
+    <string name="update_snackbar">%1$s başarıyla %2$s olarak güncellendi.</string>
+</resources>

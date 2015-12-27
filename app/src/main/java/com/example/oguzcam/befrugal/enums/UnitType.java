@@ -1,5 +1,7 @@
 package com.example.oguzcam.befrugal.enums;
 
+import java.util.ArrayList;
+
 /**
  * Created by cam on 21.12.2015.
  */
@@ -13,9 +15,9 @@ public enum UnitType {
     // kilogram
     KG("Kg"),
     // gram
-    GRAM("Gr"),
+    GR("Gram"),
     // liter
-    LT("Lt");
+    LT("Liter");
 
     private String friendlyName;
 
@@ -23,7 +25,26 @@ public enum UnitType {
         this.friendlyName = friendlyName;
     }
 
-    @Override public String toString(){
+    public String getFriendlyName(){
         return friendlyName;
+    }
+
+    public static UnitType fromString(String text) {
+        if (text != null) {
+            for (UnitType unit : UnitType.values()) {
+                if (text.equalsIgnoreCase(unit.friendlyName)) {
+                    return unit;
+                }
+            }
+        }
+        throw new IllegalArgumentException("No possible unit type for " + text);
+    }
+
+    public static ArrayList<String> getFriendlyNames() {
+        ArrayList<String> friendlyNames = new ArrayList<>();
+        for(UnitType value : UnitType.values()){
+            friendlyNames.add(value.getFriendlyName());
+        }
+        return friendlyNames;
     }
 }

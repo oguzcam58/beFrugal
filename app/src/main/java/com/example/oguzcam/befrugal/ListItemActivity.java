@@ -45,16 +45,8 @@ public class ListItemActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                ContentValues values = new ContentValues();
-//                values.put(ListContract.ListItemEntry.COLUMN_LIST_ID, mListId);
-//                values.put(ListContract.ListItemEntry.COLUMN_LIST_ITEM_NAME, "Deneme");
-//                values.put(ListContract.ListItemEntry.COLUMN_CREATION_DATE, new Date().getTime());
-//                getContentResolver().insert(ListContract.ListItemEntry.CONTENT_URI, values);
-
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-
                 Intent intent = new Intent(ListItemActivity.this, ListItemDetailActivity.class);
+                intent.putExtra(ListItemDetailActivityFragment.LIST_ITEM_DETAIL_LIST_ID, mListId);
                 startActivity(intent);
             }
         });
