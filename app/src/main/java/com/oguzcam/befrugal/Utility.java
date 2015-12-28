@@ -3,6 +3,7 @@ package com.oguzcam.befrugal;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.oguzcam.befrugal.model.ListContract;
@@ -52,7 +53,7 @@ public class Utility {
         return String.format("%.2f", amount);
     }
 
-    public static String setItemNames(Cursor data, int fieldPosition) {
+    public static String setItemNames(@NonNull Cursor data, int fieldPosition) {
         StringBuilder builder = new StringBuilder();
         while (true) {
             builder.append(data.getString(fieldPosition) + ",");
@@ -64,4 +65,5 @@ public class Utility {
         }
         return builder.toString();
     }
+
 }
