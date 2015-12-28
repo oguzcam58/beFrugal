@@ -19,6 +19,7 @@
 
     <!-- List item detail -->
     <string name="title_activity_list_item_detail">Item Detail</string>
+    <string name="item_name">Item Name</string>
     <string name="total_amount">Total Amount</string>
     <string name="bought_qty">Bought Quantity</string>
     <string name="unit_type">Unit Type</string>

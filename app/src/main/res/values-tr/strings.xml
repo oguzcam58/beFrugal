@@ -26,4 +26,5 @@
     <string name="delete_item">Nesneyi Sil</string>
     <string name="place_name">Aldığınız Yerin İsmi</string>
     <string name="place_label">Alınan Yer</string>
+    <string name="item_name">Nesne Adı</string>
 </resources>
