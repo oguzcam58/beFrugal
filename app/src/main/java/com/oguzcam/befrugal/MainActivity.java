@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.design.widget.FloatingActionButton;
 
 import android.support.design.widget.Snackbar;
@@ -18,6 +19,7 @@ import android.widget.EditText;
 import com.oguzcam.befrugal.model.ListContract;
 
 import java.util.Date;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
                 showNewListDialog();
             }
         });
+
+
     }
 
     // Get list name input from user

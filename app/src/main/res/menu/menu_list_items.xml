@@ -3,8 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.oguzcam.befrugal.ListItemActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_play"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:icon="@android:drawable/ic_media_play"
+        android:title="@string/action_play"
+        app:showAsAction="ifRoom" />
 </menu>

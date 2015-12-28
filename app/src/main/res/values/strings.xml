@@ -34,6 +34,7 @@
     <string name="place_name">Where do you buy from?</string>
     <string name="google_logo" translatable="false">Google Logo</string>
     <string name="place_label">Place</string>
+    <string name="action_play">Play</string>
 
 
 </resources>

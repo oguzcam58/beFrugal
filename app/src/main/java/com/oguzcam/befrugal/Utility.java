@@ -51,4 +51,17 @@ public class Utility {
     public static String asAmount(Double amount) {
         return String.format("%.2f", amount);
     }
+
+    public static String setItemNames(Cursor data, int fieldPosition) {
+        StringBuilder builder = new StringBuilder();
+        while (true) {
+            builder.append(data.getString(fieldPosition) + ",");
+            if (data.isLast()) {
+                data.moveToFirst();
+                break;
+            }
+            data.moveToNext();
+        }
+        return builder.toString();
+    }
 }

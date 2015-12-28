@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.speech.tts.TextToSpeech;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -13,6 +14,9 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -20,6 +24,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.oguzcam.befrugal.model.ListContract;
+
+import java.util.Locale;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -49,6 +55,10 @@ public class ListItemActivityFragment extends Fragment implements LoaderManager.
     public static final int COL_TOTAL_AMOUNT = 3;
     public static final int COL_DONE = 4;
     public static final int COL_LIST_ID = 5;
+
+    private TextToSpeech toSpeech;
+
+    private String toPlay = new String();
 
     public ListItemActivityFragment() {
     }
@@ -95,6 +105,44 @@ public class ListItemActivityFragment extends Fragment implements LoaderManager.
 
         return rootView;
     }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        toSpeech = new TextToSpeech(getContext().getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if(status != TextToSpeech.ERROR) {
+                    toSpeech.setLanguage(Locale.getDefault());
+                }
+            }
+        });
+
+        setHasOptionsMenu(true);
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        // Inflate menu resource file.
+        inflater.inflate(R.menu.menu_list_items, menu);
+
+        // Locate MenuItem with ShareActionProvider
+        MenuItem menuItem = menu.findItem(R.id.action_play);
+        menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (toSpeech != null && toPlay != null) {
+                    toSpeech.speak(toPlay, TextToSpeech.QUEUE_FLUSH, null, "toPlay");
+                }
+                return true;
+            }
+        });
+    }
+
 
     // Show delete update options
     private void showListOptionsDialog(final Cursor cursor) {
@@ -216,6 +264,7 @@ public class ListItemActivityFragment extends Fragment implements LoaderManager.
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (data != null && data.moveToFirst()) {
             mListAdapter.swapCursor(data);
+            toPlay = Utility.setItemNames(data, COL_LIST_ITEM_NAME);
         } else {
            mListAdapter.swapCursor(null);
         }

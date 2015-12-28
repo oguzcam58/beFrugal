@@ -65,38 +65,40 @@ public class ShoppingListAdapter extends CursorAdapter {
         viewHolder.selectCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                cursor.moveToPosition(viewHolder.currentCursorPosition);
-                long listId = cursor.getLong(ShoppingListFragment.COL_LIST_ID);
-                if(isChecked && done != 1){
-                    Log.v(TAG, "Checked" + listId);
+                if(!cursor.isClosed() && cursor.moveToPosition(viewHolder.currentCursorPosition)) {
 
-                    ContentValues values = new ContentValues();
-                    values.put(ListContract.ListEntry.COLUMN_DONE, 1);
-                    values.put(ListContract.ListEntry.COLUMN_DONE_TIME, new Date().getTime());
+                    long listId = cursor.getLong(ShoppingListFragment.COL_LIST_ID);
+                    if (isChecked && done != 1) {
+                        Log.v(TAG, "Checked" + listId);
 
-                    String where = ListContract.ListEntry._ID + "=?";
+                        ContentValues values = new ContentValues();
+                        values.put(ListContract.ListEntry.COLUMN_DONE, 1);
+                        values.put(ListContract.ListEntry.COLUMN_DONE_TIME, new Date().getTime());
 
-                    context.getContentResolver().update(
-                            ListContract.ListEntry.CONTENT_URI,
-                            values,
-                            where,
-                            new String[]{Long.toString(listId)}
-                            );
-                } else if (!isChecked && done == 1) {
-                    Log.v(TAG, "Unchecked" + listId);
+                        String where = ListContract.ListEntry._ID + "=?";
 
-                    ContentValues values = new ContentValues();
-                    values.put(ListContract.ListEntry.COLUMN_DONE, 0);
-                    values.put(ListContract.ListEntry.COLUMN_DONE_TIME, (Long) null);
+                        context.getContentResolver().update(
+                                ListContract.ListEntry.CONTENT_URI,
+                                values,
+                                where,
+                                new String[]{Long.toString(listId)}
+                        );
+                    } else if (!isChecked && done == 1) {
+                        Log.v(TAG, "Unchecked" + listId);
 
-                    String where = ListContract.ListEntry._ID + "=?";
+                        ContentValues values = new ContentValues();
+                        values.put(ListContract.ListEntry.COLUMN_DONE, 0);
+                        values.put(ListContract.ListEntry.COLUMN_DONE_TIME, (Long) null);
 
-                    context.getContentResolver().update(
-                            ListContract.ListEntry.CONTENT_URI,
-                            values,
-                            where,
-                            new String[]{Long.toString(listId)}
-                    );
+                        String where = ListContract.ListEntry._ID + "=?";
+
+                        context.getContentResolver().update(
+                                ListContract.ListEntry.CONTENT_URI,
+                                values,
+                                where,
+                                new String[]{Long.toString(listId)}
+                        );
+                    }
                 }
             }
         });

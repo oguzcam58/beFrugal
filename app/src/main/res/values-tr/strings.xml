@@ -27,4 +27,5 @@
     <string name="place_name">Aldığınız Yerin İsmi</string>
     <string name="place_label">Alınan Yer</string>
     <string name="item_name">Nesne Adı</string>
+    <string name="action_play">Oynat</string>
 </resources>

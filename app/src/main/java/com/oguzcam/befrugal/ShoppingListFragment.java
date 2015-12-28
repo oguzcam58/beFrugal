@@ -7,13 +7,19 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -24,6 +30,7 @@ import android.widget.ListView;
 import com.oguzcam.befrugal.model.ListContract;
 
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by oguzcam on 05/09/15.
@@ -48,6 +55,10 @@ public class ShoppingListFragment extends Fragment implements LoaderManager.Load
 
     private static final int LIST_LOADER = 0;
     private ShoppingListAdapter mListAdapter;
+
+    private TextToSpeech toSpeech;
+
+    private String toPlay = new String();
 
     public ShoppingListFragment() {
     }
@@ -90,6 +101,43 @@ public class ShoppingListFragment extends Fragment implements LoaderManager.Load
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        toSpeech = new TextToSpeech(getContext().getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if(status != TextToSpeech.ERROR) {
+                    toSpeech.setLanguage(Locale.getDefault());
+                }
+            }
+        });
+
+        setHasOptionsMenu(true);
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        // Inflate menu resource file.
+        inflater.inflate(R.menu.menu_main, menu);
+
+        // Locate MenuItem with ShareActionProvider
+        MenuItem menuItem = menu.findItem(R.id.action_play);
+        menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (toSpeech != null && toPlay != null) {
+                    toSpeech.speak(toPlay, TextToSpeech.QUEUE_FLUSH, null, "toPlay");
+                }
+                return true;
+            }
+        });
     }
 
     // Show delete update options
@@ -261,6 +309,7 @@ public class ShoppingListFragment extends Fragment implements LoaderManager.Load
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
         if (data != null && data.moveToFirst()) {
             mListAdapter.swapCursor(data);
+            toPlay = Utility.setItemNames(data, COL_LIST_NAME);
         } else {
             mListAdapter.swapCursor(null);
         }
