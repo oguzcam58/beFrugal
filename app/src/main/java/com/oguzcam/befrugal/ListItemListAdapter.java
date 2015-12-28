@@ -64,58 +64,47 @@ public class ListItemListAdapter extends CursorAdapter {
             viewHolder.listTotalAmountView.setText(R.string.not_available);
         }
 
-        if (cursor.getLong(ListItemActivityFragment.COL_DONE) > 0) {
-            viewHolder.selectCheckBox.setChecked(true);
-        } else {
-            viewHolder.selectCheckBox.setChecked(false);
-        }
-        viewHolder.isLoaded = true;
+        final int done = cursor.getInt(ListItemActivityFragment.COL_DONE);
+        viewHolder.selectCheckBox.setChecked(done == 1);
 
         viewHolder.selectCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(!viewHolder.isLoaded || cursor.isClosed()) {
-                    return;
-                }
+                if(!cursor.isClosed() && cursor.moveToPosition(viewHolder.currentCursorPosition)) {
+                    final String itemId = cursor.getString(ListItemActivityFragment.COL_LIST_ITEM_ID);
+                    final long listId = cursor.getLong(ListItemActivityFragment.COL_LIST_ID);
+                    final long done = cursor.getLong(ListItemActivityFragment.COL_DONE);
+                    final double totalAmount = cursor.getDouble(ListItemActivityFragment.COL_TOTAL_AMOUNT);
 
-                cursor.moveToPosition(viewHolder.currentCursorPosition);
-                final String itemId = cursor.getString(ListItemActivityFragment.COL_LIST_ITEM_ID);
-                final long listId = cursor.getLong(ListItemActivityFragment.COL_LIST_ID);
-                final long done = cursor.getLong(ListItemActivityFragment.COL_DONE);
-                final double totalAmount = cursor.getDouble(ListItemActivityFragment.COL_TOTAL_AMOUNT);
+                    final String where = ListContract.ListItemEntry._ID + "=?";
 
-                final String where = ListContract.ListItemEntry._ID + "=?";
+                    if(isChecked && done == 0){
+                        ContentValues values = new ContentValues();
+                        values.put(ListContract.ListItemEntry.COLUMN_DONE, 1);
+                        values.put(ListContract.ListItemEntry.COLUMN_DONE_TIME, new Date().getTime());
 
-                boolean isDone = done == 1;
+                        Utility.addToListTotalAmount(context, listId, totalAmount);
+                        context.getContentResolver().update(
+                                ListContract.ListItemEntry.CONTENT_URI,
+                                values,
+                                where,
+                                new String[]{itemId});
 
-                if(isChecked && !isDone){
-                    ContentValues values = new ContentValues();
-                    values.put(ListContract.ListItemEntry.COLUMN_DONE, 1);
-                    values.put(ListContract.ListItemEntry.COLUMN_DONE_TIME, new Date().getTime());
+                        Log.v(TAG, itemId + " is converted to done.");
+                    } else if (!isChecked && done == 1) {
+                        ContentValues values = new ContentValues();
+                        values.put(ListContract.ListItemEntry.COLUMN_DONE, 0);
+                        values.put(ListContract.ListItemEntry.COLUMN_DONE_TIME, (Long) null);
 
-                    context.getContentResolver().update(
-                            ListContract.ListItemEntry.CONTENT_URI,
-                            values,
-                            where,
-                            new String[]{itemId});
+                        Utility.addToListTotalAmount(context, listId, totalAmount * -1);
+                        context.getContentResolver().update(
+                                ListContract.ListItemEntry.CONTENT_URI,
+                                values,
+                                where,
+                                new String[]{itemId});
 
-                    Utility.addToListTotalAmount(context, listId, totalAmount);
-
-                    Log.v(TAG, itemId + " is converted to done.");
-                } else if (!isChecked && isDone) {
-                    ContentValues values = new ContentValues();
-                    values.put(ListContract.ListItemEntry.COLUMN_DONE, 0);
-                    values.put(ListContract.ListItemEntry.COLUMN_DONE_TIME, (Long) null);
-
-                    context.getContentResolver().update(
-                            ListContract.ListItemEntry.CONTENT_URI,
-                            values,
-                            where,
-                            new String[]{itemId});
-
-                    Utility.addToListTotalAmount(context, listId, totalAmount * -1);
-
-                    Log.v(TAG, itemId + " is converted to not done.");
+                        Log.v(TAG, itemId + " is converted to not done.");
+                    }
                 }
             }
         });
@@ -130,7 +119,6 @@ public class ListItemListAdapter extends CursorAdapter {
         public final TextView listTotalAmountView;
         public final CheckBox selectCheckBox;
         public int currentCursorPosition;
-        public boolean isLoaded;
 
         public ViewHolder(View view) {
             listTitleView = (TextView) view.findViewById(R.id.list_item_title);

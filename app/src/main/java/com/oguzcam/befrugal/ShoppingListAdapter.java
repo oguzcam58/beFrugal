@@ -68,7 +68,7 @@ public class ShoppingListAdapter extends CursorAdapter {
                 if(!cursor.isClosed() && cursor.moveToPosition(viewHolder.currentCursorPosition)) {
 
                     long listId = cursor.getLong(ShoppingListFragment.COL_LIST_ID);
-                    if (isChecked && done != 1) {
+                    if (isChecked && done == 0) {
                         Log.v(TAG, "Checked" + listId);
 
                         ContentValues values = new ContentValues();

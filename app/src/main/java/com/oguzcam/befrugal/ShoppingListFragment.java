@@ -287,10 +287,8 @@ public class ShoppingListFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        StringBuilder sortOrder = new StringBuilder();
-        sortOrder
-                .append(ListContract.ListEntry.COLUMN_DONE + " ASC, ")
-                .append(ListContract.ListEntry.COLUMN_LAST_UPDATED_TIME + " DESC ");
+        String sortOrder = ListContract.ListEntry.COLUMN_DONE + " ASC, " +
+                ListContract.ListEntry.COLUMN_LAST_UPDATED_TIME + " DESC ";
 
         Uri listUri = ListContract.ListEntry.buildListUri();
         if ( null != listUri ) {
@@ -299,7 +297,7 @@ public class ShoppingListFragment extends Fragment implements LoaderManager.Load
                     LIST_COLUMNS,
                     null,
                     null,
-                    sortOrder.toString()
+                    sortOrder
             );
         }
         return null;
@@ -309,7 +307,7 @@ public class ShoppingListFragment extends Fragment implements LoaderManager.Load
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
         if (data != null && data.moveToFirst()) {
             mListAdapter.swapCursor(data);
-            toPlay = Utility.setItemNames(data, COL_LIST_NAME);
+            toPlay = Utility.setItemNames(data, COL_LIST_NAME, COL_DONE);
         } else {
             mListAdapter.swapCursor(null);
         }

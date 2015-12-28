@@ -42,6 +42,8 @@ public class Utility {
                     values,
                     where,
                     selectionArgs);
+
+            cursor.close();
         }
     }
 
@@ -53,10 +55,17 @@ public class Utility {
         return String.format("%.2f", amount);
     }
 
-    public static String setItemNames(@NonNull Cursor data, int fieldPosition) {
+    /*
+    *
+    * if fieldToCheck == 0, then add to response
+    * */
+    public static String setItemNames(@NonNull Cursor data, int fieldToAdd, int fieldToCheck) {
         StringBuilder builder = new StringBuilder();
         while (true) {
-            builder.append(data.getString(fieldPosition) + ",");
+            int check = data.getInt(fieldToCheck);
+            if (check == 0) {
+                builder.append(data.getString(fieldToAdd) + ",");
+            }
             if (data.isLast()) {
                 data.moveToFirst();
                 break;

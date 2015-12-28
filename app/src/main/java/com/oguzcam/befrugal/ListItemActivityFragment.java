@@ -37,7 +37,7 @@ public class ListItemActivityFragment extends Fragment implements LoaderManager.
     private Uri mUri;
     static final String LIST_DETAIL_URI = "LD_URI";
 
-    private static final int LIST_ITEM_LOADER = 0;
+    private static final int LIST_ITEM_LOADER = 1;
     private ListItemListAdapter mListAdapter;
 
     private static final String[] LIST_COLUMNS = {
@@ -244,17 +244,15 @@ public class ListItemActivityFragment extends Fragment implements LoaderManager.
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if ( null != mUri ) {
-            StringBuilder sortOrder = new StringBuilder();
-            sortOrder
-                    .append(ListContract.ListItemEntry.COLUMN_DONE + " ASC, ")
-                    .append(ListContract.ListItemEntry.COLUMN_LAST_UPDATED_TIME + " DESC ");
+            String sortOrder = ListContract.ListItemEntry.COLUMN_DONE + " ASC, " +
+                    ListContract.ListItemEntry.COLUMN_LAST_UPDATED_TIME + " DESC ";
 
             return new CursorLoader(getActivity(),
                     mUri,
                     LIST_COLUMNS,
                     null,
                     null,
-                    sortOrder.toString()
+                    sortOrder
             );
         }
         return null;
@@ -264,7 +262,7 @@ public class ListItemActivityFragment extends Fragment implements LoaderManager.
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (data != null && data.moveToFirst()) {
             mListAdapter.swapCursor(data);
-            toPlay = Utility.setItemNames(data, COL_LIST_ITEM_NAME);
+            toPlay = Utility.setItemNames(data, COL_LIST_ITEM_NAME, COL_DONE);
         } else {
            mListAdapter.swapCursor(null);
         }
